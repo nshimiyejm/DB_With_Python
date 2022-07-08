@@ -127,3 +127,6 @@ dmypy.json
 # local virtualenv 
 mysql-workspace/
 env.py
+
+# Database ignore 
+.db
