@@ -5,7 +5,8 @@ connection = mysql.connect(
             host='localhost',
             user='user',
             password='test',
-            database = 'db_name'
+            database = 'db_name',
+            allow_local_infile=True
         )
 
 cursor = connection.cursor()
@@ -24,15 +25,31 @@ cursor.execute("DROP TABLE IF EXISTS salesperson")
 cursor.execute(create_query)
 
 # Import data from a CSV file and upload the data to the salesperson table in the sales db
-with open('./salesperson.csv', 'r') as f:
-    # Read through each row in the file useing f
-    csv_data = csv.reader(f)
-    
-    for row in csv_data:
-        row_tuple = tuple(row)
-        cursor.execute()
-    
-    
-    
 
+# ================================================================================================
+# This type of insertion will load the data as strings, this can cause a problem if the data contained in the file has any ints 
 
+# with open('./salespeople.csv', 'r') as f:
+#     # Read through each row in the file useing f
+#     csv_data = csv.reader(f)
+    
+#     for row in csv_data:   
+#         # create a tuple that can be inserted using mysql connector into the db
+#         row_tuple = tuple(row)
+#         cursor.execute('INSERT INTO salesperson(first_name, last_name, email_address, city, state) \
+#                        VALUES ("%s", "%s","%s","%s","%s")', row_tuple)
+# ================================================================================================    
+q = '''LOAD DATA LOCAL INFILE 
+    '/Users/administrator_1/Documents/Repos/Python-DB/DB_With_Python/sales/salespeople.csv'
+    INTO TABLE salesperson 
+    FIELDS TERMINATED BY ',' 
+    ENCLOSED BY '"' 
+    (first_name, last_name, email_address, city, state);'''
+cursor.execute(q)
+
+connection.commit()
+
+cursor.execute("SELECT * FROM salesperson LIMIT 10")
+print(cursor.fetchall())
+
+connection.close()
