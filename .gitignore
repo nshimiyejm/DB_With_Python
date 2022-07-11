@@ -131,3 +131,5 @@ env.py
 # Database ignore 
 .db
 *.db
+*.code-workspace
+*.yml
