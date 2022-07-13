@@ -133,3 +133,6 @@ env.py
 *.db
 *.code-workspace
 *.yml
+
+# Configuration files 
+*.ini
