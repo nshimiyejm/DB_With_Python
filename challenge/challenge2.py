@@ -1,19 +1,11 @@
-# Todo 
-# 1. Import data from a CSV file into MySQL DB 
-#   - Modify the CSV if necessary 
-#   - Imnport data into db named red30 
-#   - Add the data into table name Sales with primary key OrderNum
-#   - What is the most expensive order 
-#   - Who ordered the most expensive order 
-# 2. Create a table from the CSV file 
-# 3. Query data from the DB  
+
 
 # Add libraries 
 from configparser import ConfigParser
 from select import select
 import pandas as pd 
 from sqlalchemy import Column, Integer, String, Float, desc
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -70,17 +62,23 @@ file_name = "red30.csv"
 # Set the dataframe 
 df = pd.read_csv(file_name)
 
-df.to_sql(con=engine, name=Sale.__tablename__, if_exists='append', index=False)
+# df.to_sql(con=engine, name=Sale.__tablename__, if_exists='append', index=False)
+# Using the replace function to update data in the Database is it exists 
+df.to_sql(con=engine, name=Sale.__tablename__, if_exists='replace', index=False)
 
 # Create a session to pull the data from the db 
 session = sessionmaker()
 session.configure(bind=engine)
 s = session()
 
-results = s.query(Sale.cust_name, Sale.order_total).order_by(Sale.order_total.desc()).limit(1) 
+# Use an overal function to return the largest amount 'func)
+overall_max = s.query(func.max(Sale.order_total)).scalar()
+print(overall_max)
+
+# results = s.query(Sale.cust_name, Sale.order_total).order_by(Sale.order_total.desc()).limit(1) 
 
 
-print('\n\n\n\n')
-for r in results:
-    print(r)
+# print('\n\n\n\n')
+# for r in results:
+#     print(r)
 
